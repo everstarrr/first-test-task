@@ -1,0 +1,21 @@
+.items-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.name-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 14ch;
+    white-space: nowrap;
+}
+
+.low-name-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 16ch;
+    white-space: nowrap;
+}
