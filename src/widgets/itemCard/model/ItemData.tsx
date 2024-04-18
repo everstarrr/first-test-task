@@ -207,4 +207,5 @@ export const itemData:Array<Service> = [
         technology_tag: 3,
         preview: '/previews/img_11.png',
     },
+
 ]

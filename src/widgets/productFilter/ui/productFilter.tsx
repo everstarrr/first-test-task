@@ -18,12 +18,24 @@ interface ProductTag {
     title: string
 }
 
-export const ProductFilter = forwardRef(function ProductFilter(props:any, ref) {
+export const ProductFilter = forwardRef(function ProductFilter(props: any, ref) {
     const productFilters = useRef(productSearchData)
     const [visibleProducts, setVisibleProducts] = useState(productFilters.current.slice(0, 5));
     const [showAllButtonPressed, setShowAllButtonPressed] = useState(false);
     const [inputValue, setInputValue] = useState('')
     const inputRef = useRef<HTMLInputElement>(null)
+    const initialProducts = {
+        1: false, // футболки
+        2: false, // толстовки
+        3: false, // бейсболки
+        4: false, // календари
+        5: false, // диджитал услуги
+        6: false, // ручки
+        7: false, // чашки
+        8: false, // шопперы
+        9: false, // носки
+    }
+
 
     useImperativeHandle(ref, () => {
         return {
@@ -32,19 +44,7 @@ export const ProductFilter = forwardRef(function ProductFilter(props:any, ref) {
                 if (inputRef.current) {
                     inputRef.current.value = '';
                     setInputValue('')
-                    setSelectedProducts({
-                        1: false, // футболки
-                        2: false, // толстовки
-                        3: false, // бейсболки
-                        4: false, // календари
-                        5: false, // диджитал услуги
-                        6: false, // ручки
-                        7: false, // чашки
-                        8: false, // шопперы
-                        9: false, // носки
-                    })
-                    //console.log(inputRef.current.value)
-                    //console.log(selectedProducts)
+                    setSelectedProducts(initialProducts)
                 }
             },
         }
@@ -64,7 +64,6 @@ export const ProductFilter = forwardRef(function ProductFilter(props:any, ref) {
     // очистка инпута через кнопку в компоненте
     const clearInput = () => {
         setInputValue('')
-        console.log(selectedProducts)
     }
 
     // изменение значения инпута
@@ -73,17 +72,7 @@ export const ProductFilter = forwardRef(function ProductFilter(props:any, ref) {
     };
 
     // выбранные фильтры
-    const [selectedProducts, setSelectedProducts] = useState({
-        1: false, // футболки
-        2: false, // толстовки
-        3: false, // бейсболки
-        4: false, // календари
-        5: false, // диджитал услуги
-        6: false, // ручки
-        7: false, // чашки
-        8: false, // шопперы
-        9: false, // носки
-    });
+    const [selectedProducts, setSelectedProducts] = useState(initialProducts);
 
 
     // изменение выбранных фильтров по клику
@@ -92,7 +81,7 @@ export const ProductFilter = forwardRef(function ProductFilter(props:any, ref) {
         //console.log(id)
         //const newValue = !selectedProducts[id.at(-1) as keyof typeof selectedProducts]
         //console.log(newValue)
-        setSelectedProducts(prevStat =>{
+        setSelectedProducts(prevStat => {
             const newValue = !prevStat[id.at(-1) as keyof typeof prevStat]
             return {...prevStat, [id.at(-1)]: newValue}
         });
@@ -121,7 +110,7 @@ export const ProductFilter = forwardRef(function ProductFilter(props:any, ref) {
             </div>
             <ScrollArea className={'h-[168px]'}>
                 {visibleProducts.map((product: ProductTag) => (
-                    <label key={product.id} htmlFor={'product' + product.id} className='flex items-center border mb-2'>
+                    <label key={product.id} htmlFor={'product' + product.id} className='flex items-center mb-2'>
                         <Checkbox id={'product' + product.id}
                                   onClick={handleCheckboxChange}
                                   checked={selectedProducts[product.id as keyof typeof selectedProducts]}
@@ -132,7 +121,7 @@ export const ProductFilter = forwardRef(function ProductFilter(props:any, ref) {
                 ))}
             </ScrollArea>
 
-            <button className={' flex space-x-1 items-center border'} onClick={showAllProducts}>
+            <button className={' flex space-x-1 items-center'} onClick={showAllProducts}>
                     <span
                         className={showAllButtonPressed ? 'text-myGray' : 'text-myBlue '}>{showAllButtonPressed ? 'скрыть' : 'показать всё'}</span>
                 <FontAwesomeIcon className={showAllButtonPressed ? 'rotate-180' : ''} icon={faAngleDown}

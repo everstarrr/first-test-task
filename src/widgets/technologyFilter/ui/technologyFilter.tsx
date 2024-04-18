@@ -4,7 +4,7 @@ import {PT_Sans} from "next/font/google";
 import {technologySearchData} from "@/widgets/technologyFilter/model/tecnologyFilterData";
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
-import {forwardRef, useImperativeHandle, useRef, useState} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSearch, faAngleDown} from '@fortawesome/free-solid-svg-icons'
 import './technologyFilter.css'
@@ -19,24 +19,37 @@ interface TechnologyTag {
 }
 
 
-export const TechnologyFilter = forwardRef( function TechnologyFilter(props, ref){
+export const TechnologyFilter = forwardRef( function TechnologyFilter(props:any, ref){
     const technologyFilters = useRef(technologySearchData)
     const [visibleTechnologies, setVisibleTechnologies] = useState(technologyFilters.current.slice(0, 5));
     const [showAllButtonPressed, setShowAllButtonPressed] = useState(false);
     const [inputValue, setInputValue] = useState('')
     const inputRef = useRef<HTMLInputElement>(null)
+    const inititalTechnologies = {
+        1: false, // биговка
+        2: false, // вырубка
+        3: false, // вышивка
+        4: false, // деколь
+        5: false, // лазерная гравировка
+        6: false, // широкоформатная печать
+        7: false, // лепка
+        8: false, // термопечать
+    }
 
     useImperativeHandle(ref, () => {
         return {
+            // метод для очистки инпута через main
             clearInputRef() {
                 if (inputRef.current) {
                     inputRef.current.value = '';
+                    setInputValue('')
+                    setSelectedTechnologies(inititalTechnologies)
                 }
-            }
+            },
         }
     }, [])
 
-    const showAllProducts = (): void => {
+    const showAllTechnologies = (): void => {
         if (!showAllButtonPressed) {
             setShowAllButtonPressed(true)
             setVisibleTechnologies(technologyFilters.current);
@@ -55,6 +68,23 @@ export const TechnologyFilter = forwardRef( function TechnologyFilter(props, ref
         setInputValue(event.target.value);
     };
 
+    // выбранные фильтры
+    const [selectedTechnologies, setSelectedTechnologies] = useState(inititalTechnologies);
+
+    // изменение выбранных фильтров по клику
+    const handleCheckboxChange = (event: any) => {
+        const {id} = event.target
+        setSelectedTechnologies(prevStat => {
+            const newValue = !prevStat[id.at(-1) as keyof typeof prevStat]
+            return {...prevStat, [id.at(-1)]: newValue}
+        });
+    };
+
+    useEffect(() => {
+        //console.log(selectedProducts)
+        props.handler.handleTechnologyChange(selectedTechnologies)
+    }, [selectedTechnologies])
+
     return (
         <div className={'flex-col flex space-y-2 '}>
             <Label htmlFor={'itemSearch'}></Label>
@@ -70,17 +100,19 @@ export const TechnologyFilter = forwardRef( function TechnologyFilter(props, ref
                        className={'placeholder-myLightGray mt-2'}/>
             </div>
             <ScrollArea className={'h-[168px]'}>
-                {visibleTechnologies.map((technologyTag: TechnologyTag) => (
-                    <label key={technologyTag.id} htmlFor={technologyTag.title} className='flex items-center border mb-2'>
-                        <Checkbox id={technologyTag.title}
+                {visibleTechnologies.map((technology: TechnologyTag) => (
+                    <label key={technology.id} htmlFor={'technology' + technology.id} className='flex items-center mb-2'>
+                        <Checkbox id={'technology' + technology.id}
+                                  onClick={handleCheckboxChange}
+                                  checked={selectedTechnologies[technology.id as keyof typeof selectedTechnologies]}
                                   className={'mr-1 aria-checked:bg-myGreen aria-checked:bg-opacity-5 aria-checked:border-myGreen'}/>
                         <span className='checkmark'></span>
-                        {technologyTag.title}
+                        {technology.title}
                     </label>
                 ))}
             </ScrollArea>
 
-            <button className={' flex space-x-1 items-center border'} onClick={showAllProducts}>
+            <button className={' flex space-x-1 items-center'} onClick={showAllTechnologies}>
                     <span
                         className={showAllButtonPressed ? 'text-myGray' : 'text-myBlue '}>{showAllButtonPressed ? 'скрыть' : 'показать всё'}</span>
                 <FontAwesomeIcon className={showAllButtonPressed ? 'rotate-180' : ''} icon={faAngleDown}

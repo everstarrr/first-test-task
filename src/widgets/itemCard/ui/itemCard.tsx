@@ -27,10 +27,10 @@ const ptSansBold = PT_Sans({preload: false, weight: '700'})
 export const ItemCard = ({service}:{service:Service}) => {
 
     return (
-        <div className={'h-80 flex flex-col space-y-2.5 w-[260px] shadow-lg rounded-lg border'}>
-            <Image src={service.preview} alt={''} width={260} height={172} className={'border rounded-t-lg'}/>
-            <span className={'items-text h-9 leading-[18px] px-4 border text-sm'}>{service.title}</span>
-            <div className={'px-4 flex justify-between items-center border'}>
+        <div className={'h-80 flex flex-col space-y-2.5 w-[260px] shadow-lg rounded-lg'}>
+            <Image src={service.preview} alt={''} width={260} height={172} className={'rounded-t-lg'}/>
+            <span className={'items-text h-9 leading-[18px] px-4 text-sm'}>{service.title}</span>
+            <div className={'px-4 flex justify-between items-center'}>
                 <span className={ptSansBold.className}>От&nbsp;{service.price}&nbsp;руб.</span>
                 <div className={'flex space-x-1 items-center'}>
                     <FontAwesomeIcon icon={faClock} style={{color: '#999999'}}/>
